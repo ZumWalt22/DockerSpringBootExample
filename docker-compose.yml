@@ -1,0 +1,39 @@
+﻿version: '2.1'
+services:
+    db:
+        image: postgres:latest
+        container_name: sb_db # "Spring Boot 用のDB" という意味の任意の名前
+        restart: always
+        ports:
+            - 5432:5432 # 今回はコンテナ同士でつなぐだけなのでコメントアウト
+        environment:
+            POSTGRES_USER: 'dev' # DBのユーザー名（＝DB名）
+            POSTGRES_PASSWORD: 'pass' # DBのパスワード
+        volumes:
+            - .\init_db:/docker-entrypoint-initdb.d
+    java:
+    #     image: tiqwab/boot:0.0.1
+    #     container_name: sb
+    #     restart: always
+    #     ports:
+    #         - 8080:8080 # ホストからデバッグできるようにポートフォーワード
+    #     volumes:
+    #         - .:/app       
+    #     #     - ./build:/app # ディレクトリ扱いにするため末尾にdをつける
+    #     environment:
+    #         JAR_TARGET: demo-0.0.1-SNAPSHOT.jar
+    #     tty: true
+    #     depends_on:
+    #         - db
+
+        build: .
+        image: tiqwab/boot:0.0.1
+        container_name: sb
+        restart: always
+        ports:
+            - "8080:8080"
+        volumes:
+            - .:/app
+        tty: true
+        depends_on:
+            - db
